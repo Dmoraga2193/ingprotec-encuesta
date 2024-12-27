@@ -1,99 +1,108 @@
-import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ClipboardList, BarChart2, Users } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <h1 className="text-2xl font-bold text-center sm:text-left">
-          Sistema de Encuestas
-        </h1>
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Accede a la encuesta en{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              /survey
-            </code>
-            .
-          </li>
-          <li>
-            Revisa las estadísticas en{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              /admin
-            </code>
-            .
-          </li>
-        </ol>
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-teal-600 to-emerald-600 text-white py-12">
+        <div className="container mx-auto px-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-center">
+            Sistema de Encuestas
+          </h1>
+          <p className="mt-4 text-xl text-center max-w-2xl mx-auto">
+            Una plataforma moderna para recopilar y analizar feedback de manera
+            eficiente
+          </p>
+        </div>
+      </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <Link
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="/survey"
+      <main className="flex-grow container mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100">
+            Bienvenido a nuestro Sistema de Encuestas
+          </h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Diseñado para ayudarte a obtener insights valiosos de tus empleados
+            y mejorar tu organización.
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+          <Button asChild size="lg" className="bg-teal-600 hover:bg-teal-700">
+            <Link href="/survey">Ir a la Encuesta</Link>
+          </Button>
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="text-teal-600 border-teal-600 hover:bg-teal-50"
           >
-            Ir a la Encuesta
-          </Link>
-          <Link
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="/admin"
-          >
-            Panel de Administración
-          </Link>
+            <Link href="/admin">Panel de Administración</Link>
+          </Button>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center text-teal-600 dark:text-teal-400">
+                <ClipboardList className="mr-2" />
+                Encuestas Personalizables
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="text-gray-600 dark:text-gray-300">
+                Crea encuestas adaptadas a las necesidades específicas de tu
+                organización para obtener feedback preciso y relevante.
+              </CardDescription>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center text-teal-600 dark:text-teal-400">
+                <BarChart2 className="mr-2" />
+                Análisis Detallado
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="text-gray-600 dark:text-gray-300">
+                Obtén insights profundos con nuestras herramientas de análisis
+                avanzadas, visualizaciones claras y reportes detallados.
+              </CardDescription>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center text-teal-600 dark:text-teal-400">
+                <Users className="mr-2" />
+                Experiencia de Usuario Intuitiva
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="text-gray-600 dark:text-gray-300">
+                Interfaz fácil de usar tanto para administradores como para
+                participantes, asegurando una alta tasa de respuesta.
+              </CardDescription>
+            </CardContent>
+          </Card>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Aprende Next.js
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Ejemplos
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Ir a nextjs.org →
-        </a>
+
+      <footer className="bg-gray-100 dark:bg-gray-800 py-6">
+        <div className="container mx-auto px-4 text-center text-gray-600 dark:text-gray-300">
+          <p>
+            &copy; 2024 Sistema de Encuestas. Todos los derechos reservados.
+          </p>
+        </div>
       </footer>
     </div>
   );

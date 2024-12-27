@@ -27,8 +27,6 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Legend,
-  LineChart,
-  Line,
 } from "recharts";
 import {
   Accordion,
@@ -44,12 +42,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SurveyData {
   questions: string[];
   timestamp: string;
   deviceId: string;
   isTestSubmission: boolean;
+  suggestions?: string;
 }
 
 const questions = [
@@ -211,18 +211,6 @@ function StatsContent({ data, title }: { data: SurveyData[]; title: string }) {
     value: parseFloat(getQuestionStats(index).average),
   }));
 
-  const timeSeriesData = data
-    .sort(
-      (a, b) =>
-        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-    )
-    .map((survey) => ({
-      fecha: new Date(survey.timestamp).toLocaleDateString(),
-      promedio:
-        survey.questions.reduce((sum, q) => sum + parseInt(q), 0) /
-        survey.questions.length,
-    }));
-
   return (
     <div className="space-y-8">
       <Card>
@@ -326,28 +314,6 @@ function StatsContent({ data, title }: { data: SurveyData[]; title: string }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Evolución Temporal de Promedios</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={timeSeriesData}>
-              <XAxis dataKey="fecha" />
-              <YAxis domain={[0, 10]} />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="promedio"
-                stroke="#8884d8"
-                name="Promedio General"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
           <CardTitle>Análisis Detallado por Pregunta</CardTitle>
         </CardHeader>
         <CardContent>
@@ -414,6 +380,29 @@ function StatsContent({ data, title }: { data: SurveyData[]; title: string }) {
               );
             })}
           </Accordion>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Sugerencias y Comentarios</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="h-[400px] w-full rounded-md border p-4">
+            {data
+              .filter(
+                (survey) =>
+                  survey.suggestions && survey.suggestions.trim() !== ""
+              )
+              .map((survey, index) => (
+                <div key={index} className="mb-4 last:mb-0">
+                  <p className="text-sm text-muted-foreground mb-1">
+                    {new Date(survey.timestamp).toLocaleString()}
+                  </p>
+                  <p className="text-sm">{survey.suggestions}</p>
+                </div>
+              ))}
+          </ScrollArea>
         </CardContent>
       </Card>
     </div>

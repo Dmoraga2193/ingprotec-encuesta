@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { getDeviceId, generateSurveyId, isTestMode } from "@/lib/utils";
 import {
@@ -40,6 +41,7 @@ const formSchema = z.object({
   questions: z.array(z.string()).min(10, {
     message: "Por favor responda todas las preguntas.",
   }),
+  suggestions: z.string().optional(),
 });
 
 const questions = [
@@ -122,6 +124,7 @@ export function SurveyForm() {
   const [showAlert, setShowAlert] = useState(false);
   const [testMode, setTestMode] = useState(isTestMode());
   const [currentStep, setCurrentStep] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     const checkPreviousSubmission = async () => {
@@ -146,6 +149,7 @@ export function SurveyForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       questions: [],
+      suggestions: "",
     },
   });
 
@@ -178,8 +182,7 @@ export function SurveyForm() {
       if (!testMode) {
         setHasSubmitted(true);
       }
-      form.reset();
-      setCurrentStep(0);
+      setIsCompleted(true);
     } catch (error) {
       console.error("Error submitting survey:", error);
       toast({
@@ -192,6 +195,36 @@ export function SurveyForm() {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (isCompleted) {
+    return (
+      <Card className="w-full max-w-3xl mx-auto bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
+            ¡Gracias por tu participación!
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-center">
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            Tu opinión es muy valiosa para nosotros. Hemos registrado tus
+            respuestas con éxito.
+          </p>
+          {testMode && (
+            <Button
+              onClick={() => {
+                setIsCompleted(false);
+                form.reset();
+                setCurrentStep(0);
+              }}
+              className="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+            >
+              Realizar otra prueba
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+    );
   }
 
   if (hasSubmitted && !testMode) {
@@ -210,14 +243,16 @@ export function SurveyForm() {
     );
   }
 
-  const canGoNext = form.watch(`questions.${currentStep}`);
-  const isLastStep = currentStep === questions.length - 1;
+  const canGoNext =
+    currentStep < questions.length
+      ? form.watch(`questions.${currentStep}`)
+      : form.watch("suggestions") !== undefined;
 
   return (
     <Card className="w-full max-w-3xl mx-auto bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 shadow-xl">
       <CardHeader className="space-y-6">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <CardTitle className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
             Encuesta de Satisfacción Laboral
           </CardTitle>
           <div className="flex items-center space-x-2">
@@ -239,7 +274,7 @@ export function SurveyForm() {
             className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
             initial={{ width: "0%" }}
             animate={{
-              width: `${((currentStep + 1) / questions.length) * 100}%`,
+              width: `${((currentStep + 1) / (questions.length + 1)) * 100}%`,
             }}
             transition={{ duration: 0.3 }}
           />
@@ -256,56 +291,82 @@ export function SurveyForm() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <FormField
-                  control={form.control}
-                  name={`questions.${currentStep}`}
-                  render={({ field }) => (
-                    <FormItem className="space-y-6">
-                      <div className="space-y-2">
-                        <FormLabel className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-                          {questions[currentStep].title}
-                        </FormLabel>
-                        <CardDescription className="text-lg text-gray-600 dark:text-gray-300">
-                          {questions[currentStep].question}
-                        </CardDescription>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                          {questions[currentStep].description}
-                        </p>
-                      </div>
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="grid grid-cols-2 gap-4 sm:grid-cols-5"
-                        >
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
-                            <FormItem key={value}>
-                              <FormControl>
-                                <RadioGroupItem
-                                  value={value.toString()}
-                                  className="peer sr-only"
-                                />
-                              </FormControl>
-                              <FormLabel className="flex flex-col items-center justify-center h-16 rounded-lg border-2 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-purple-500 dark:hover:border-pink-500 peer-data-[state=checked]:border-purple-500 dark:peer-data-[state=checked]:border-pink-500 peer-data-[state=checked]:bg-purple-50 dark:peer-data-[state=checked]:bg-pink-900/20 [&:has([data-state=checked])]:border-purple-500 dark:[&:has([data-state=checked])]:border-pink-500 cursor-pointer transition-all duration-200 ease-in-out">
-                                <span className="text-2xl font-semibold text-gray-700 dark:text-gray-200">
-                                  {value}
-                                </span>
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
-                                  {value === 1
-                                    ? "Muy bajo"
-                                    : value === 10
-                                    ? "Excelente"
-                                    : ""}
-                                </span>
-                              </FormLabel>
-                            </FormItem>
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {currentStep < questions.length ? (
+                  <FormField
+                    control={form.control}
+                    name={`questions.${currentStep}`}
+                    render={({ field }) => (
+                      <FormItem className="space-y-6">
+                        <div className="space-y-2">
+                          <FormLabel className="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-200">
+                            {questions[currentStep].title}
+                          </FormLabel>
+                          <CardDescription className="text-base sm:text-lg text-gray-600 dark:text-gray-300">
+                            {questions[currentStep].question}
+                          </CardDescription>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                            {questions[currentStep].description}
+                          </p>
+                        </div>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="grid grid-cols-5 sm:grid-cols-10 gap-2 sm:gap-4"
+                          >
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                              <FormItem key={value}>
+                                <FormControl>
+                                  <RadioGroupItem
+                                    value={value.toString()}
+                                    className="peer sr-only"
+                                  />
+                                </FormControl>
+                                <FormLabel className="flex flex-col items-center justify-center h-12 sm:h-16 rounded-lg border-2 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-purple-500 dark:hover:border-pink-500 peer-data-[state=checked]:border-purple-500 dark:peer-data-[state=checked]:border-pink-500 peer-data-[state=checked]:bg-purple-50 dark:peer-data-[state=checked]:bg-pink-900/20 [&:has([data-state=checked])]:border-purple-500 dark:[&:has([data-state=checked])]:border-pink-500 cursor-pointer transition-all duration-200 ease-in-out">
+                                  <span className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-200">
+                                    {value}
+                                  </span>
+                                  {(value === 1 || value === 10) && (
+                                    <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 text-center">
+                                      {value === 1 ? "Muy bajo" : "Excelente"}
+                                    </span>
+                                  )}
+                                </FormLabel>
+                              </FormItem>
+                            ))}
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name="suggestions"
+                    render={({ field }) => (
+                      <FormItem className="space-y-6">
+                        <div className="space-y-2">
+                          <FormLabel className="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-200">
+                            Sugerencias y Comentarios
+                          </FormLabel>
+                          <CardDescription className="text-base sm:text-lg text-gray-600 dark:text-gray-300">
+                            ¿Tienes alguna sugerencia o comentario adicional
+                            para mejorar tu experiencia en la empresa?
+                          </CardDescription>
+                        </div>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Escribe tus sugerencias aquí..."
+                            className="min-h-[150px] resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </motion.div>
             </AnimatePresence>
 
@@ -321,10 +382,10 @@ export function SurveyForm() {
                 <span>Anterior</span>
               </Button>
 
-              {isLastStep ? (
+              {currentStep === questions.length + 1 ? (
                 <Button
                   type="submit"
-                  disabled={isSubmitting || !canGoNext}
+                  disabled={isSubmitting}
                   className="min-w-[120px] bg-gradient-to-r from-purple-500 to-pink-500 text-white"
                 >
                   {isSubmitting ? (

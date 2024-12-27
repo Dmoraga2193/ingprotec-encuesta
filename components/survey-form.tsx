@@ -189,17 +189,38 @@ export function SurveyForm() {
 
   if (isCompleted) {
     return (
-      <Card className="w-full max-w-3xl mx-auto bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 shadow-xl">
-        <CardHeader>
-          <CardTitle className="text-2xl sm:text-3xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
+      <Card className="w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white p-6">
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-center">
             ¡Gracias por tu participación!
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-center">
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+        <CardContent className="p-6">
+          <p className="text-lg text-gray-700 dark:text-gray-300 text-center">
             Tu opinión es muy valiosa para nosotros. Hemos registrado tus
             respuestas con éxito.
           </p>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex justify-center mt-6"
+          >
+            <svg
+              className="w-16 h-16 text-green-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </motion.div>
         </CardContent>
       </Card>
     );
@@ -208,10 +229,12 @@ export function SurveyForm() {
   if (hasSubmitted) {
     return (
       <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white dark:bg-gray-800 rounded-xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Ya has completado esta encuesta</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+              Ya has completado esta encuesta
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-600 dark:text-gray-300">
               Solo se permite una respuesta por dispositivo. Gracias por tu
               participación.
             </AlertDialogDescription>
@@ -225,27 +248,34 @@ export function SurveyForm() {
     currentStep < questions.length
       ? form.watch(`questions.${currentStep}`)
       : form.watch("suggestions") !== undefined;
+  const isLastStep = currentStep === questions.length;
 
   return (
-    <Card className="w-full max-w-3xl mx-auto bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 shadow-xl">
-      <CardHeader className="space-y-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <CardTitle className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
-            Encuesta de Satisfacción Laboral
-          </CardTitle>
-        </div>
-        <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
-            initial={{ width: "0%" }}
-            animate={{
-              width: `${((currentStep + 1) / (questions.length + 1)) * 100}%`,
-            }}
-            transition={{ duration: 0.3 }}
-          />
-        </div>
+    <Card className="w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white p-6">
+        <CardTitle className="text-2xl sm:text-3xl font-bold text-center">
+          Encuesta de Satisfacción Laboral
+        </CardTitle>
+        <CardDescription className="text-white text-center mt-2">
+          Tu opinión nos ayuda a mejorar
+        </CardDescription>
       </CardHeader>
-      <CardContent className="pt-6">
+      <CardContent className="p-6">
+        <div className="mb-6">
+          <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-gradient-to-r from-teal-500 to-emerald-500"
+              initial={{ width: "0%" }}
+              animate={{
+                width: `${((currentStep + 1) / (questions.length + 1)) * 100}%`,
+              }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center">
+            Pregunta {currentStep + 1} de {questions.length + 1}
+          </p>
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <AnimatePresence mode="wait">
@@ -287,7 +317,7 @@ export function SurveyForm() {
                                     className="peer sr-only"
                                   />
                                 </FormControl>
-                                <FormLabel className="flex flex-col items-center justify-center h-12 sm:h-16 rounded-lg border-2 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-purple-500 dark:hover:border-pink-500 peer-data-[state=checked]:border-purple-500 dark:peer-data-[state=checked]:border-pink-500 peer-data-[state=checked]:bg-purple-50 dark:peer-data-[state=checked]:bg-pink-900/20 [&:has([data-state=checked])]:border-purple-500 dark:[&:has([data-state=checked])]:border-pink-500 cursor-pointer transition-all duration-200 ease-in-out">
+                                <FormLabel className="flex flex-col items-center justify-center h-12 sm:h-16 rounded-lg border-2 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-teal-500 dark:hover:border-emerald-500 peer-data-[state=checked]:border-teal-500 dark:peer-data-[state=checked]:border-emerald-500 peer-data-[state=checked]:bg-teal-50 dark:peer-data-[state=checked]:bg-emerald-900/20 [&:has([data-state=checked])]:border-teal-500 dark:[&:has([data-state=checked])]:border-emerald-500 cursor-pointer transition-all duration-200 ease-in-out">
                                   <span className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-200">
                                     {value}
                                   </span>
@@ -323,7 +353,7 @@ export function SurveyForm() {
                         <FormControl>
                           <Textarea
                             placeholder="Escribe tus sugerencias aquí..."
-                            className="min-h-[150px] resize-none"
+                            className="min-h-[150px] resize-none border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-teal-500 dark:focus:border-emerald-500 focus:ring-2 focus:ring-teal-500 dark:focus:ring-emerald-500"
                             {...field}
                           />
                         </FormControl>
@@ -341,17 +371,17 @@ export function SurveyForm() {
                 variant="outline"
                 onClick={() => setCurrentStep((step) => step - 1)}
                 disabled={currentStep === 0}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span>Anterior</span>
               </Button>
 
-              {currentStep === questions.length + 1 ? (
+              {isLastStep ? (
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="min-w-[120px] bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                  className="min-w-[120px] bg-gradient-to-r from-teal-500 to-emerald-500 text-white hover:from-teal-600 hover:to-emerald-600 transition-all duration-300"
                 >
                   {isSubmitting ? (
                     <>
@@ -367,7 +397,7 @@ export function SurveyForm() {
                   type="button"
                   onClick={() => setCurrentStep((step) => step + 1)}
                   disabled={!canGoNext}
-                  className="flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                  className="flex items-center space-x-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white hover:from-teal-600 hover:to-emerald-600 transition-all duration-300"
                 >
                   <span>Siguiente</span>
                   <ChevronRight className="w-4 h-4" />

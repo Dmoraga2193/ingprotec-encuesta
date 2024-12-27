@@ -10,7 +10,6 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Bar,
   BarChart,
@@ -127,33 +126,16 @@ export function StatisticsDashboard() {
   }
 
   const realData = surveyData.filter((survey) => !survey.isTestSubmission);
-  const testData = surveyData.filter((survey) => survey.isTestSubmission);
+  //testData removed
 
   return (
-    <Tabs defaultValue="real" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 mb-4">
-        <TabsTrigger value="real">Datos Reales</TabsTrigger>
-        <TabsTrigger value="test">Datos de Prueba</TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="real">
-        <StatsContent
-          data={realData}
-          title="Estadísticas de Respuestas Reales"
-        />
-      </TabsContent>
-
-      <TabsContent value="test">
-        <StatsContent
-          data={testData}
-          title="Estadísticas de Respuestas de Prueba"
-        />
-      </TabsContent>
-    </Tabs>
+    <div className="space-y-8">
+      <StatsContent data={surveyData} />
+    </div>
   );
 }
 
-function StatsContent({ data, title }: { data: SurveyData[]; title: string }) {
+function StatsContent({ data }: { data: SurveyData[] }) {
   const uniqueResponses = new Set(data.map((survey) => survey.deviceId)).size;
 
   const getQuestionStats = (questionIndex: number) => {
@@ -215,7 +197,7 @@ function StatsContent({ data, title }: { data: SurveyData[]; title: string }) {
     <div className="space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
+          <CardTitle>Estadísticas de Respuestas</CardTitle>
           <CardDescription>Resumen general de las respuestas</CardDescription>
         </CardHeader>
         <CardContent>

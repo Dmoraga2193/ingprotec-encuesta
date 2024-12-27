@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 
-const SURVEY_URL = "https://ingprotec-encuesta.vercel.app";
+const SURVEY_URL = "https://ingprotec-encuesta.vercel.app/survey";
 
 export function SurveyQR() {
   const downloadQR = () => {

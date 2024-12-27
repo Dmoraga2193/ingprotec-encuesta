@@ -45,74 +45,72 @@ const formSchema = z.object({
 
 const questions = [
   {
-    title: "Liderazgo y Dirección",
+    title: "Sobre los jefes",
     question:
-      "¿Qué tan clara y efectiva consideras la dirección y liderazgo de la empresa?",
+      "¿Qué tan bien crees que los líderes o jefes están haciendo su trabajo para guiar al equipo?",
     description:
-      "Evalúa la claridad de la visión y la efectividad de la toma de decisiones a nivel directivo.",
+      "Evalúa la efectividad del liderazgo en la dirección y guía del equipo.",
   },
   {
-    title: "Comunicación Interna",
+    title: "Comunicación en el equipo",
     question:
-      "¿Qué tan efectiva es la comunicación dentro de los equipos y entre los diferentes departamentos?",
+      "¿Qué tan fácil es hablar y compartir ideas con tus compañeros y otros equipos?",
     description:
-      "Valora la fluidez y claridad de la información compartida en la organización.",
+      "Valora la fluidez de la comunicación y el intercambio de ideas dentro de la organización.",
   },
   {
-    title: "Ambiente Laboral",
-    question:
-      "¿Qué tan satisfecho estás con el ambiente de trabajo y la colaboración entre compañeros?",
+    title: "Ambiente de trabajo",
+    question: "¿Qué tan cómodo y agradable te sientes trabajando aquí?",
     description:
-      "Evalúa el clima laboral, las relaciones interpersonales y el trabajo en equipo.",
+      "Evalúa el clima laboral y tu nivel de comodidad en el entorno de trabajo.",
   },
   {
-    title: "Recursos y Herramientas",
+    title: "Herramientas y recursos",
     question:
-      "¿Qué tan adecuados y accesibles son los recursos y herramientas para realizar tu trabajo?",
+      "¿Qué tan bien equipado te sientes para hacer tu trabajo (herramientas, materiales, tecnología, etc.)?",
     description:
-      "Valora si cuentas con lo necesario para desempeñar tus funciones eficientemente.",
+      "Valora la disponibilidad y adecuación de los recursos necesarios para realizar tu trabajo.",
   },
   {
-    title: "Capacitación y Desarrollo",
+    title: "Aprender y crecer",
     question:
-      "¿Qué tan satisfecho estás con las oportunidades de aprendizaje y crecimiento profesional que ofrece la empresa?",
+      "¿Qué tan bien crees que la empresa te ayuda a mejorar tus habilidades o crecer profesionalmente?",
     description:
-      "Evalúa los programas de formación y las posibilidades de desarrollo de carrera.",
+      "Evalúa las oportunidades de desarrollo y crecimiento profesional que ofrece la empresa.",
   },
   {
     title: "Reconocimiento",
     question:
-      "¿Qué tan valorado te sientes por tu trabajo y logros dentro de la empresa?",
+      "¿Qué tan valorado te sientes por el esfuerzo y trabajo que haces?",
     description:
-      "Valora si tus contribuciones son reconocidas y apreciadas adecuadamente.",
+      "Valora el nivel de reconocimiento que recibes por tu trabajo y contribuciones.",
   },
   {
-    title: "Satisfacción del Cliente",
+    title: "Clientes",
     question:
-      "Según tu percepción, ¿qué tan bien se prioriza y gestiona la satisfacción del cliente en la empresa?",
+      "Desde tu punto de vista, ¿qué tan bien estamos haciendo las cosas para que los clientes estén felices?",
     description:
-      "Evalúa el enfoque de la empresa en la experiencia y satisfacción del cliente.",
+      "Evalúa la percepción interna sobre la satisfacción de los clientes con los productos o servicios de la empresa.",
   },
   {
-    title: "Procesos Internos",
+    title: "Cómo hacemos las cosas",
     question:
-      "¿Qué tan claros, eficientes y funcionales consideras los procesos internos de la empresa?",
+      "¿Qué tan claros y prácticos te parecen los procesos o formas de trabajar de la empresa?",
     description:
-      "Valora la organización y efectividad de los procedimientos y flujos de trabajo.",
+      "Valora la claridad y eficiencia de los procesos y métodos de trabajo en la organización.",
   },
   {
-    title: "Innovación y Adaptabilidad",
+    title: "Innovación",
     question:
-      "¿Qué tan bien fomenta la empresa la innovación y la adaptación a los cambios del mercado?",
+      "¿Qué tan bien crees que la empresa se mantiene al día con nuevas ideas o formas de hacer las cosas?",
     description:
-      "Evalúa la cultura de innovación y la flexibilidad organizacional frente a nuevos desafíos.",
+      "Evalúa la capacidad de la empresa para innovar y adaptarse a nuevas tendencias o tecnologías.",
   },
   {
-    title: "Satisfacción General",
-    question:
-      "¿Qué tan satisfecho estás, en general, con la empresa como lugar de trabajo?",
+    title: "Tu experiencia general",
+    question: "En general, ¿qué tan feliz estás trabajando aquí?",
     description:
-      "Valora tu nivel general de satisfacción considerando todos los aspectos de tu experiencia laboral.",
+      "Valora tu nivel general de satisfacción y felicidad en tu experiencia laboral con la empresa.",
   },
 ];
 
@@ -244,11 +242,12 @@ export function SurveyForm() {
     );
   }
 
+  const totalSteps = questions.length + 1;
+  const isLastStep = currentStep === totalSteps - 1;
   const canGoNext =
     currentStep < questions.length
       ? form.watch(`questions.${currentStep}`)
-      : form.watch("suggestions") !== undefined;
-  const isLastStep = currentStep === questions.length;
+      : true;
 
   return (
     <Card className="w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden">
@@ -266,14 +265,12 @@ export function SurveyForm() {
             <motion.div
               className="h-full bg-gradient-to-r from-teal-500 to-emerald-500"
               initial={{ width: "0%" }}
-              animate={{
-                width: `${((currentStep + 1) / (questions.length + 1)) * 100}%`,
-              }}
+              animate={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center">
-            Pregunta {currentStep + 1} de {questions.length + 1}
+            Paso {currentStep + 1} de {totalSteps}
           </p>
         </div>
         <Form {...form}>
@@ -377,7 +374,18 @@ export function SurveyForm() {
                 <span>Anterior</span>
               </Button>
 
-              {isLastStep ? (
+              {!isLastStep && (
+                <Button
+                  type="button"
+                  onClick={() => setCurrentStep((step) => step + 1)}
+                  disabled={!canGoNext}
+                  className="flex items-center space-x-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white hover:from-teal-600 hover:to-emerald-600 transition-all duration-300"
+                >
+                  <span>Siguiente</span>
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              )}
+              {isLastStep && (
                 <Button
                   type="submit"
                   disabled={isSubmitting}
@@ -391,16 +399,6 @@ export function SurveyForm() {
                   ) : (
                     "Finalizar"
                   )}
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  onClick={() => setCurrentStep((step) => step + 1)}
-                  disabled={!canGoNext}
-                  className="flex items-center space-x-2 bg-gradient-to-r from-teal-500 to-emerald-500 text-white hover:from-teal-600 hover:to-emerald-600 transition-all duration-300"
-                >
-                  <span>Siguiente</span>
-                  <ChevronRight className="w-4 h-4" />
                 </Button>
               )}
             </div>

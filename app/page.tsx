@@ -39,14 +39,14 @@ export default function Home() {
           <Button asChild size="lg" className="bg-teal-600 hover:bg-teal-700">
             <Link href="/survey">Ir a la Encuesta</Link>
           </Button>
-          <Button
+          {/* <Button
             asChild
             size="lg"
             variant="outline"
             className="text-teal-600 border-teal-600 hover:bg-teal-50"
           >
             <Link href="/admin">Panel de Administración</Link>
-          </Button>
+          </Button> */}
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">

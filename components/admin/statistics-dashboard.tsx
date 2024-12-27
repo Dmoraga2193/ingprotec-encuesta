@@ -125,9 +125,6 @@ export function StatisticsDashboard() {
     );
   }
 
-  const realData = surveyData.filter((survey) => !survey.isTestSubmission);
-  //testData removed
-
   return (
     <div className="space-y-8">
       <StatsContent data={surveyData} />

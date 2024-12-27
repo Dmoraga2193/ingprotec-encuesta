@@ -18,7 +18,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { getDeviceId, generateSurveyId, isTestMode } from "@/lib/utils";
+import { getDeviceId, generateSurveyId } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -33,7 +33,6 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -122,7 +121,6 @@ export function SurveyForm() {
   const [deviceId, setDeviceId] = useState<string>("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [testMode, setTestMode] = useState(isTestMode());
   const [currentStep, setCurrentStep] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -131,19 +129,17 @@ export function SurveyForm() {
       const id = await getDeviceId();
       setDeviceId(id);
 
-      if (!testMode) {
-        const docRef = doc(db, "devices", id);
-        const docSnap = await getDoc(docRef);
+      const docRef = doc(db, "devices", id);
+      const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          setHasSubmitted(true);
-          setShowAlert(true);
-        }
+      if (docSnap.exists()) {
+        setHasSubmitted(true);
+        setShowAlert(true);
       }
     };
 
     checkPreviousSubmission();
-  }, [testMode]);
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -162,26 +158,20 @@ export function SurveyForm() {
         ...values,
         timestamp: new Date().toISOString(),
         deviceId: deviceId,
-        isTestSubmission: testMode,
+        isTestSubmission: false,
       });
 
-      if (!testMode) {
-        await setDoc(doc(db, "devices", deviceId), {
-          lastSubmission: new Date().toISOString(),
-          surveyId: surveyId,
-        });
-      }
+      await setDoc(doc(db, "devices", deviceId), {
+        lastSubmission: new Date().toISOString(),
+        surveyId: surveyId,
+      });
 
       toast({
-        title: testMode ? "Prueba enviada" : "Encuesta enviada",
-        description: testMode
-          ? "Gracias por probar la encuesta."
-          : "Gracias por completar la encuesta.",
+        title: "Encuesta enviada",
+        description: "Gracias por completar la encuesta.",
       });
 
-      if (!testMode) {
-        setHasSubmitted(true);
-      }
+      setHasSubmitted(true);
       setIsCompleted(true);
     } catch (error) {
       console.error("Error submitting survey:", error);
@@ -210,24 +200,12 @@ export function SurveyForm() {
             Tu opinión es muy valiosa para nosotros. Hemos registrado tus
             respuestas con éxito.
           </p>
-          {testMode && (
-            <Button
-              onClick={() => {
-                setIsCompleted(false);
-                form.reset();
-                setCurrentStep(0);
-              }}
-              className="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-            >
-              Realizar otra prueba
-            </Button>
-          )}
         </CardContent>
       </Card>
     );
   }
 
-  if (hasSubmitted && !testMode) {
+  if (hasSubmitted) {
     return (
       <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
         <AlertDialogContent>
@@ -255,19 +233,6 @@ export function SurveyForm() {
           <CardTitle className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
             Encuesta de Satisfacción Laboral
           </CardTitle>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="test-mode"
-              checked={testMode}
-              onCheckedChange={setTestMode}
-            />
-            <label
-              htmlFor="test-mode"
-              className="text-sm text-muted-foreground"
-            >
-              Modo de prueba
-            </label>
-          </div>
         </div>
         <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
           <motion.div
